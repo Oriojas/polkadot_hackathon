@@ -40,10 +40,22 @@ async def balance(wallet_balance: str):
 
     return balance_off
 
+
 @app.get('/send/')
 async def send(wallet_send: str):
+    """
+    this function send token from main account to any wallet
+    :param wallet_send: wallet destination
+    :return: if transaction is ok True
+    """
 
+    amount = 0.1
+    tx = sendTk().send(wallet_to_send=wallet_send, amount=amount)
+    print(f'Tx is: {tx}')
 
+    return tx
 
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=8080)
+
+
