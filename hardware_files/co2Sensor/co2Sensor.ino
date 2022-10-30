@@ -1,4 +1,7 @@
+#include <WiFi.h>
 #include <Wire.h>
+#include <WiFiClient.h>
+#include <HTTPClient.h>
 #include <Adafruit_SSD1306.h>
 
 #define SCREEN_WIDTH 128
@@ -74,33 +77,53 @@ static const uint8_t logo_polkadot[512] = {
   };
 
 
-// Potentiometer is connected to GPIO 36  
-const int potPin = 25;
+const char* ssid = "Milo";
+const char* password = "97274340";
+String serverName = "https://ec2-34-235-116-75.compute-1.amazonaws.com:8080/get_data_esp/";
+String source = "'Sensor'";
+const int sensorPin = 36;
+int sensorValue = 0;
 
-// variable for storing the potentiometer value
-int potValue = 0;
+WiFiClient wifiClient;
 
 void setup() {
   
   Serial.begin(115200);
+  WiFi.begin(ssid, password);
   delay(500);
 
   Wire.begin(5, 4);
-
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C, false, false)) {
     Serial.println(F("SSD1306 allocation failed"));
     for(;;);
-  }
+  } 
+
+    // Conexión wifi
+  while (WiFi.status() != WL_CONNECTED) {
+ 
+    delay(1000);
+    Serial.println("Connecting..");
+    
+    }
+
+  // Mensaje exito conexión
+  Serial.println("======================================");
+  Serial.print("Conectado a:\t");
+  Serial.println(WiFi.SSID()); 
+  Serial.print("IP address:\t");
+  Serial.println(WiFi.localIP());
+  Serial.println("======================================"); 
   
 }
+
 
 void loop() {
   
   display.clearDisplay();
   display.drawBitmap(64, 0, logo_polkadot, 60, 64, 1);
   // Reading potentiometer value
-  potValue = analogRead(potPin);
-  Serial.println(potValue);
+  sensorValue = analogRead(sensorPin);
+  Serial.println(sensorValue);
   
   // Tamaño del texto
   display.setTextSize(2);
@@ -113,12 +136,32 @@ void loop() {
     // Posición del texto
   display.setCursor(10, 26);
   // Escribir texto
-  display.println(potValue);
+  display.println(sensorValue);
 
-  if (int(potValue) > 800){
+  if (int(sensorValue) > 800){
       display.setCursor(2, 48);
       // Escribir texto
       display.println("send!");
+    
+      if (WiFi.status() == WL_CONNECTED) { //Check WiFi connection status
+  
+      HTTPClient http;  //Declare an object of class HTTPClient
+      String serverPath = serverName + "?co2=" + sensorValue + "&source=" + source; 
+    
+      http.begin(wifiClient, serverPath);                         //Specify request destination
+      int httpCode = http.GET();                                  //Send the request
+      Serial.println("request OK");
+  
+      if (httpCode > 0) { //Check the returning code
+    
+        String payload = http.getString();   //Get the request response payload
+        Serial.println(payload);             //Print the response payload
+  
+        }
+      
+        http.end();   //Close connection
+      
+      }      
       delay(5000);
     }
  

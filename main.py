@@ -1,10 +1,18 @@
 import os
 import uvicorn
+import pyodbc
 from fastapi import FastAPI
 from send_tk import sendTk
-from substrateinterface import SubstrateInterface, Keypair
+from substrateinterface import SubstrateInterface
 
 app = FastAPI()
+
+SERVER = os.environ["SERVER"]
+DATABASE = os.environ["DATABASE"]
+USERNAME = os.environ["USERNAME"]
+PASSWORD = os.environ["PASSWORD"]
+DRIVER = os.environ["DRIVER"]
+TOKEN = os.environ["TOKEN"]
 
 
 @app.get('/balance/')
@@ -42,20 +50,59 @@ async def balance(wallet_balance: str):
 
 
 @app.get('/send/')
-async def send(wallet_send: str):
+async def send(wallet_send: str, token: str):
     """
     this function send token from main account to any wallet
     :param wallet_send: wallet destination
     :return: if transaction is ok True
     """
-
-    amount = 0.1
-    tx = sendTk().send(wallet_to_send=wallet_send, amount=amount)
-    print(f'Tx is: {tx}')
+    if token == TOKEN:
+        amount = 0.1
+        tx = sendTk().send(wallet_to_send=wallet_send, amount=amount)
+        print(f'Tx is: {tx}')
+    else:
+        print(f'Not valid token {token}')
+        tx = False
 
     return tx
 
+
+@app.get('/data_co/')
+async def data_co(co2: int, origin: str, wallet_send: str, token: str):
+    """
+    this function send data to data base and send token if co2 value up 800 ppm
+    :param co2: int, value of ppm co2
+    :param origin: str, is origin of data test or sensor
+    :param wallet_send: str, wallet to send tokens
+    :param token: uuid for endpoint
+    :return: None
+    """
+
+    print(''.center(60, '='))
+    print(f'ppm co2: {co2} , origen: {origin}')
+
+    if token == TOKEN:
+        if co2 > 800:
+            amount = 0.1
+            tx = sendTk().send(wallet_to_send=wallet_send, amount=amount)
+            print(f'🤑 send {amount} to {wallet_send} is: {tx}')
+        else:
+            print(f'Valid token')
+
+        # incert data in db
+        with pyodbc.connect(
+                'DRIVER=' + DRIVER + ';SERVER=tcp:' + SERVER + ';PORT=1433;DATABASE=' + DATABASE + ';UID=' + USERNAME + ';PWD=' + PASSWORD) as conn:
+            with conn.cursor() as cursor:
+                count = cursor.execute(
+                    f"INSERT INTO polkadothack.dbo.registro_co2 (CO2, DATE_C, ORIGIN) VALUES ({co2}, DEFAULT, '{origin}');").rowcount
+                conn.commit()
+                print(f'Rows inserted: {str(count)}')
+
+        print(''.center(60, '='))
+
+    else:
+        print(f'Not valid token {token}')
+
+
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=8080)
-
-
