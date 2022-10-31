@@ -1,11 +1,17 @@
 import os
-import uvicorn
 import pyodbc
-from fastapi import FastAPI
+import uvicorn
 from send_tk import sendTk
+from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from substrateinterface import SubstrateInterface
 
 app = FastAPI()
+
+app.mount("/css", StaticFiles(directory="css"), name="css")
+templates = Jinja2Templates(directory="templates")
 
 SERVER = os.environ["SERVER"]
 DATABASE = os.environ["DATABASE"]
@@ -13,6 +19,13 @@ USERNAME = os.environ["USERNAME"]
 PASSWORD = os.environ["PASSWORD"]
 DRIVER = os.environ["DRIVER"]
 TOKEN = os.environ["TOKEN"]
+
+
+@app.get("/", response_class=HTMLResponse)
+async def home(request: Request):
+    return templates.TemplateResponse("home_page/index.html", {
+        "request": request
+    })
 
 
 @app.get('/balance/')
