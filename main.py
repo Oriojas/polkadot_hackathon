@@ -29,7 +29,7 @@ async def balance(wallet_balance: str):
             ss58_format=42,
             type_registry_preset='westend')
 
-        print("😀 local Substrate node running")
+        print("😀 last node running")
 
     except ConnectionRefusedError:
         print("⚠️ No local Substrate node running, try running 'start_local_substrate_node.sh' first")
