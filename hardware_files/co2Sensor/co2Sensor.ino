@@ -79,8 +79,10 @@ static const uint8_t logo_polkadot[512] = {
 
 const char* ssid = "Milo";
 const char* password = "97274340";
-String serverName = "https://ec2-34-235-116-75.compute-1.amazonaws.com:8080/get_data_esp/";
-String source = "'Sensor'";
+String wallet = "5D2fBKHgezt6pKKuXFo8Xse3sT9hZK5PtkJEyacozZJnVXZ3";
+String token = "0ce956fc-131b-42d6-a4b1-8e8319e45f84";
+String serverName = "http://ec2-3-83-236-70.compute-1.amazonaws.com:8086/data_co/";
+String source = "Sensor";
 const int sensorPin = 36;
 int sensorValue = 0;
 
@@ -121,7 +123,7 @@ void loop() {
   
   display.clearDisplay();
   display.drawBitmap(64, 0, logo_polkadot, 60, 64, 1);
-  // Reading potentiometer value
+
   sensorValue = analogRead(sensorPin);
   Serial.println(sensorValue);
   
@@ -142,28 +144,30 @@ void loop() {
       display.setCursor(2, 48);
       // Escribir texto
       display.println("send!");
+  }
     
-      if (WiFi.status() == WL_CONNECTED) { //Check WiFi connection status
-  
-      HTTPClient http;  //Declare an object of class HTTPClient
-      String serverPath = serverName + "?co2=" + sensorValue + "&source=" + source; 
-    
-      http.begin(wifiClient, serverPath);                         //Specify request destination
-      int httpCode = http.GET();                                  //Send the request
-      Serial.println("request OK");
-  
-      if (httpCode > 0) { //Check the returning code
-    
-        String payload = http.getString();   //Get the request response payload
-        Serial.println(payload);             //Print the response payload
-  
-        }
-      
-        http.end();   //Close connection
-      
-      }      
-      delay(5000);
+  if (WiFi.status() == WL_CONNECTED) { 
+
+  HTTPClient http;  
+  String serverPath = serverName + "?co2=" + sensorValue + "&origin=" + source + "&wallet_send=" + wallet + "&token=" + token; 
+
+  http.begin(wifiClient, serverPath);                         
+  int httpCode = http.GET();                                 
+  Serial.println("request OK");
+
+  if (httpCode > 0) { //Check the returning code
+
+    String payload = http.getString();   
+    Serial.println(payload);            
+
     }
+  
+  http.end();   //Close connection
+  
+  }      
+  
+  delay(15000);
+    
  
   // Enviar a pantalla
   display.display();
