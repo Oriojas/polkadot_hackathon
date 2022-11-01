@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <title>CO2-Guardian</title>
@@ -22,9 +21,10 @@
             <ul class="nav flex-column">
 
             <div class="container-fluid">
-              <h4 class="sidebar-heading d-flex justify-content-between mt-4 mb-1 text-muted text-uppercase">
+              <h3 class="sidebar-heading d-flex justify-content-between mt-4 mb-1 text-muted text-uppercase">
                 MEDIR CO2:
-              </h4>
+              </h3>
+              <br>
               <p class="text-break">
                 La importancia de hacer un uso responsable de los combustibles fosiles es muy importante para la conservacion del planeta
               </p>
@@ -39,9 +39,10 @@
 
               <div class="mb-3 border rounded" style='padding: 20px;'>
                 <div id='divPlotly'></div>
-
-
-
+                  <script>
+                    {{plot | safe}}
+                    Plotly.react('divPlotly', plotly_data.data, plotly_data.layout);
+                  </script>
               </div>
         </main>
 

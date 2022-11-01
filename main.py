@@ -23,8 +23,12 @@ TOKEN = os.environ["TOKEN"]
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
+    with open('templates/plots/new_plot.txt', 'r', encoding='utf-8') as file:
+        plot = file.readlines()
+
     return templates.TemplateResponse("home_page/index.html", {
-        "request": request
+        "request": request,
+        "plot": str(plot[0])
     })
 
 
