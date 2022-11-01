@@ -23,15 +23,15 @@ print(init)
 
 DF = DF[DF['DATE_C'] > init]
 
-fig = make_subplots(1, 1)
-fig.add_trace(go.Scatter(x=DF['DATE_C'],
-                         y=DF['CO2'][DF['ORIGIN'] == 'Sensor'],
-                         name='CO2 (Sensor)',
-                         mode='lines+markers'), 1, 1)
+fig = go.Figure(data=go.Scatter(x=DF['DATE_C'],
+                                y=DF['CO2'][DF['ORIGIN'] == 'Sensor'],
+                                name='CO2 (Sensor)',
+                                mode='lines',
+                                line_color='rgb(230,0,122)'))
 
 template = 'plotly_white'
 fig.update_layout(template=template, title="PPM CO2")
-#fig.show()
+# fig.show()
 
 # convert it to JSON
 fig_json = fig.to_json()

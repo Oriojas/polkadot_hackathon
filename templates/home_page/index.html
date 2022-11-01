@@ -25,24 +25,25 @@
                 MEDIR CO2:
               </h3>
               <br>
-              <p class="text-break">
-                La importancia de hacer un uso responsable de los combustibles fosiles es muy importante para la conservacion del planeta
-              </p>
+                <p class="text-break">
+                  La importancia de hacer un uso responsable de los combustibles fosiles es muy importante para la conservacion del planeta
+                </p>
             </div>
           </div>
         </nav>
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" >
           <br>
-          <div class="mb-3 border rounded" style='padding: 20px;'>
+          <div class="mb-3 border rounded" style='padding: 10px;'>
             <h1 class="h2">Dashboard</h1>
 
-              <div class="mb-3 border rounded" style='padding: 20px;'>
-                <div id='divPlotly'></div>
+              <div class="mb-3 border rounded" style='padding: 4px;'>
+                <div id='divPlotly'>
                   <script>
                     {{plot | safe}}
                     Plotly.react('divPlotly', plotly_data.data, plotly_data.layout);
                   </script>
+                </div>
               </div>
         </main>
 
