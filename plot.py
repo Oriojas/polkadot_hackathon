@@ -22,7 +22,7 @@ class plotSensor:
 
         with pyodbc.connect(
                 'DRIVER=' + DRIVER + ';SERVER=tcp:' + SERVER + ';PORT=1433;DATABASE=' + DATABASE + ';UID=' + USERNAME + ';PWD=' + PASSWORD) as conn:
-            sql_query = f'SELECT * FROM polkadothack.dbo.registro_co2'
+            sql_query = f'SELECT * FROM ( SELECT *, ROW_NUMBER() OVER (ORDER BY DATE_C DESC) AS row FROM polkadothack.dbo.registro_co2 ) ASalias WHERE row > 0 AND row <= 300'
             DF = pd.read_sql(sql_query, conn)
 
         DF['DATE_C'] = pd.to_datetime(DF['DATE_C'])
@@ -46,13 +46,18 @@ class plotSensor:
                                  mode='lines',
                                  line_color='rgb(230,0,122)'), 1, 1)
 
+        fig.add_hline(y=820,
+                      line_width=2,
+                      line_dash="dash",
+                      line_color="gray")
+
         fig.add_trace(go.Bar(name='Grant',
                              x=names,
                              y=balance_w,
                              marker_color='rgb(230,0,122)'), 1, 2)
 
         template = 'plotly_white'
-        fig.update_layout(template=template, title="PPM CO2 and WALLET STATUS")
+        fig.update_layout(template=template, title="PPM CO2 and WALLET STATUS LAST HOUR")
         # fig.show()
 
         # convert it to JSON
