@@ -12,6 +12,7 @@ from fastapi.templating import Jinja2Templates
 app = FastAPI()
 
 app.mount("/css", StaticFiles(directory="css"), name="css")
+app.mount("/img", StaticFiles(directory="img"), name="img")
 templates = Jinja2Templates(directory="templates")
 
 SERVER = os.environ["SERVER"]
@@ -24,6 +25,11 @@ TOKEN = os.environ["TOKEN"]
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
+    """
+    this function render front
+    :param request:
+    :return:
+    """
 
     bal_obj = getBalance()
     w_1 = bal_obj.fit(wallet='5GcDVqDQZ5n2qhUmFSP4stJvqXppcmevVW8dVWrXFQUJKXHD')
