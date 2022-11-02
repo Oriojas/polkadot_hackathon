@@ -140,7 +140,7 @@ void loop() {
   // Escribir texto
   display.println(sensorValue);
 
-  if (int(sensorValue) > 800){
+  if (int(sensorValue) > 820){
       display.setCursor(2, 48);
       // Escribir texto
       display.println("send!");
@@ -155,14 +155,14 @@ void loop() {
   int httpCode = http.GET();                                 
   Serial.println("request OK");
 
-  if (httpCode > 0) { //Check the returning code
+  if (httpCode > 0) { 
 
     String payload = http.getString();   
     Serial.println(payload);            
 
     }
   
-  http.end();   //Close connection
+  http.end();
   
   }      
   

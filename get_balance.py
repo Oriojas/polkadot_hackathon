@@ -33,7 +33,7 @@ class getBalance:
             params=[wallet]
         )
 
-        print(result)
+        #print(result)
         balance_off = int(result.value['data']['free'] / 10 ** 8) / 10000
 
         print(balance_off)

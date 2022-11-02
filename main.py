@@ -25,7 +25,11 @@ TOKEN = os.environ["TOKEN"]
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
 
-    plotSensor().plot()
+    bal_obj = getBalance()
+    w_1 = bal_obj.fit(wallet='5GcDVqDQZ5n2qhUmFSP4stJvqXppcmevVW8dVWrXFQUJKXHD')
+    w_2 = bal_obj.fit(wallet='5D2fBKHgezt6pKKuXFo8Xse3sT9hZK5PtkJEyacozZJnVXZ3')
+
+    plotSensor().plot(wallet_1=w_1, wallet_2=w_2)
     print(f'Plot OK!')
 
     with open('templates/plots/new_plot.txt', 'r', encoding='utf-8') as file:
@@ -85,7 +89,7 @@ async def data_co(co2: int, origin: str, wallet_send: str, token: str):
     print(f'ppm co2: {co2} , origen: {origin}')
 
     if token == TOKEN:
-        if co2 > 800:
+        if co2 > 820:
             amount = 0.1
             tx = sendTk().send(wallet_to_send=wallet_send, amount=amount)
             print(f'🤑 send {amount} to {wallet_send} is: {tx}')
