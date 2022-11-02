@@ -32,8 +32,8 @@ async def home(request: Request):
     """
 
     bal_obj = getBalance()
-    w_1 = bal_obj.fit(wallet='5GcDVqDQZ5n2qhUmFSP4stJvqXppcmevVW8dVWrXFQUJKXHD')
-    w_2 = bal_obj.fit(wallet='5D2fBKHgezt6pKKuXFo8Xse3sT9hZK5PtkJEyacozZJnVXZ3')
+    w_1, _ = bal_obj.fit(wallet='5GcDVqDQZ5n2qhUmFSP4stJvqXppcmevVW8dVWrXFQUJKXHD')
+    w_2, ln = bal_obj.fit(wallet='5D2fBKHgezt6pKKuXFo8Xse3sT9hZK5PtkJEyacozZJnVXZ3')
 
     plotSensor().plot(wallet_1=w_1, wallet_2=w_2)
     print(f'Plot OK!')
@@ -42,7 +42,8 @@ async def home(request: Request):
         plot = file.readlines()
     return templates.TemplateResponse("home_page/index.html", {
         "request": request,
-        "plot": str(plot[0])
+        "plot": str(plot[0]),
+        'ln': ln
     })
 
 
