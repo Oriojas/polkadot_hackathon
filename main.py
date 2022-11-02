@@ -2,11 +2,12 @@ import os
 import pyodbc
 import uvicorn
 from send_tk import sendTk
+from get_balance import getBalance
+from plot import plotSensor
 from fastapi.responses import HTMLResponse
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from substrateinterface import SubstrateInterface
 
 app = FastAPI()
 
@@ -23,9 +24,12 @@ TOKEN = os.environ["TOKEN"]
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
+
+    plotSensor().plot()
+    print(f'Plot OK!')
+
     with open('templates/plots/new_plot.txt', 'r', encoding='utf-8') as file:
         plot = file.readlines()
-
     return templates.TemplateResponse("home_page/index.html", {
         "request": request,
         "plot": str(plot[0])
@@ -40,28 +44,9 @@ async def balance(wallet_balance: str):
     :return: balance_off
     """
 
-    try:
-        substrate = SubstrateInterface(
-            url="wss://westend-rpc.polkadot.io",
-            ss58_format=42,
-            type_registry_preset='westend')
+    bal_obj = getBalance()
 
-        print("😀 last node running")
-
-    except ConnectionRefusedError:
-        print("⚠️ No local Substrate node running, try running 'start_local_substrate_node.sh' first")
-        exit()
-
-    result = substrate.query(
-        module='System',
-        storage_function='Account',
-        params=[wallet_balance]
-    )
-
-    print(result)
-    balance_off = int(result.value['data']['free'] / 10 ** 8) / 10000
-
-    print(balance_off)
+    balance_off = bal_obj.fit(wallet=wallet_balance)
 
     return balance_off
 
@@ -70,6 +55,7 @@ async def balance(wallet_balance: str):
 async def send(wallet_send: str, token: str):
     """
     this function send token from main account to any wallet
+    :param token:
     :param wallet_send: wallet destination
     :return: if transaction is ok True
     """
