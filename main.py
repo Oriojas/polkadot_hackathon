@@ -84,7 +84,7 @@ async def send(wallet_send: str, token: str):
 @app.get('/data_co/')
 async def data_co(co2: int, origin: str, wallet_send: str, token: str):
     """
-    this function send data to data base and send token if co2 value up 800 ppm
+    this function send data to database and send token if co2 value up 800 ppm
     :param co2: int, value of ppm co2
     :param origin: str, is origin of data test or sensor
     :param wallet_send: str, wallet to send tokens
@@ -101,7 +101,37 @@ async def data_co(co2: int, origin: str, wallet_send: str, token: str):
             tx = sendTk().send(wallet_to_send=wallet_send, amount=amount)
             print(f'🤑 send {amount} to {wallet_send} is: {tx}')
         else:
-            print(f'Valid token')
+            print(f'Invalid token')
+
+        # incert data in db
+        with pyodbc.connect(
+                'DRIVER=' + DRIVER + ';SERVER=tcp:' + SERVER + ';PORT=1433;DATABASE=' + DATABASE + ';UID=' + USERNAME + ';PWD=' + PASSWORD) as conn:
+            with conn.cursor() as cursor:
+                count = cursor.execute(
+                    f"INSERT INTO polkadothack.dbo.co2_bici (CO2, DATE_C, ORIGIN) VALUES ({co2}, DEFAULT, '{origin}');").rowcount
+                conn.commit()
+                print(f'Rows inserted: {str(count)}')
+
+        print(''.center(60, '='))
+
+    else:
+        print(f'Not valid token {token}')
+
+
+@app.get('/data_co_bici/')
+async def data_co(co2: int, origin: str, token: str):
+    """
+    this function send data to database and send token if co2 value up 800 ppm
+    :param co2: int, value of ppm co2
+    :param origin: str, is origin of data test or sensor
+    :param token: uuid for endpoint
+    :return: None
+    """
+
+    print(''.center(60, '='))
+    print(f'ppm co2: {co2} , origen: {origin}')
+
+    if token == TOKEN:
 
         # incert data in db
         with pyodbc.connect(
