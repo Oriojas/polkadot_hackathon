@@ -138,7 +138,7 @@ async def data_co(co2: int, origin: str, token: str):
                 'DRIVER=' + DRIVER + ';SERVER=tcp:' + SERVER + ';PORT=1433;DATABASE=' + DATABASE + ';UID=' + USERNAME + ';PWD=' + PASSWORD) as conn:
             with conn.cursor() as cursor:
                 count = cursor.execute(
-                    f"INSERT INTO polkadothack.dbo.registro_co2 (CO2, DATE_C, ORIGIN) VALUES ({co2}, DEFAULT, '{origin}');").rowcount
+                    f"INSERT INTO polkadothack.dbo.co2_bici (CO2, DATE_C, ORIGIN) VALUES ({co2}, DEFAULT, '{origin}');").rowcount
                 conn.commit()
                 print(f'Rows inserted: {str(count)}')
 
