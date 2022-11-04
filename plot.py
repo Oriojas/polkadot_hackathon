@@ -22,7 +22,7 @@ class plotSensor:
 
         with pyodbc.connect(
                 'DRIVER=' + DRIVER + ';SERVER=tcp:' + SERVER + ';PORT=1433;DATABASE=' + DATABASE + ';UID=' + USERNAME + ';PWD=' + PASSWORD) as conn:
-            sql_query = f'SELECT * FROM ( SELECT *, ROW_NUMBER() OVER (ORDER BY DATE_C DESC) AS row FROM polkadothack.dbo.registro_co2 ) ASalias WHERE row > 0 AND row <= 300'
+            sql_query = f'SELECT * FROM ( SELECT *, ROW_NUMBER() OVER (ORDER BY DATE_C DESC) AS row FROM polkadothack.dbo.registro_co2 ) AS alias WHERE row > 0 AND row <= 300'
             DF = pd.read_sql(sql_query, conn)
 
         DF['DATE_C'] = pd.to_datetime(DF['DATE_C'])
