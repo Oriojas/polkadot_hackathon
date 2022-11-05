@@ -1,6 +1,7 @@
 import os
 import pyodbc
 import uvicorn
+import pandas as pd
 from send_tk import sendTk
 from get_balance import getBalance
 from plot import plotSensor
@@ -133,7 +134,7 @@ async def data_co(co2: int, origin: str, token: str):
 
     if token == TOKEN:
 
-        # incert data in db
+        # insert data in db
         with pyodbc.connect(
                 'DRIVER=' + DRIVER + ';SERVER=tcp:' + SERVER + ';PORT=1433;DATABASE=' + DATABASE + ';UID=' + USERNAME + ';PWD=' + PASSWORD) as conn:
             with conn.cursor() as cursor:
@@ -146,6 +147,31 @@ async def data_co(co2: int, origin: str, token: str):
 
     else:
         print(f'Not valid token {token}')
+
+
+@app.get('/query_co2_bici/')
+async def query_co2_bici(rows: int, token: str):
+    """
+    this function test database
+    :param rows: number of rows to query
+    :param token: uuid for endpoint
+    :return: json whit rows in rows param
+    """
+    if token == TOKEN:
+
+        with pyodbc.connect(
+                'DRIVER=' + DRIVER + ';SERVER=tcp:' + SERVER + ';PORT=1433;DATABASE=' + DATABASE + ';UID=' + USERNAME + ';PWD=' + PASSWORD) as conn:
+            sql_query = f'SELECT * FROM ( SELECT *, ROW_NUMBER() OVER (ORDER BY DATE_C DESC) AS row FROM polkadothack.dbo.co2_bici ) AS alias WHERE row > 0 AND row <= {rows}'
+            DF = pd.read_sql(sql_query, conn)
+
+            json_out_put = DF.to_json()
+
+            print('OK')
+
+    else:
+        print(f'Not valid token {token}')
+
+    return json_out_put
 
 
 if __name__ == '__main__':

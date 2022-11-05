@@ -136,3 +136,4 @@ dmypy.json
 script.sh
 /img/polka_badge_ok2.svg
 nohup.out
+templates/plots/new_plot.html
