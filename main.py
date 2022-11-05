@@ -5,7 +5,8 @@ import pandas as pd
 from send_tk import sendTk
 from get_balance import getBalance
 from plot import plotSensor
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.encoders import jsonable_encoder
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -162,16 +163,18 @@ async def query_co2_bici(rows: int, token: str):
         with pyodbc.connect(
                 'DRIVER=' + DRIVER + ';SERVER=tcp:' + SERVER + ';PORT=1433;DATABASE=' + DATABASE + ';UID=' + USERNAME + ';PWD=' + PASSWORD) as conn:
             sql_query = f'SELECT * FROM ( SELECT *, ROW_NUMBER() OVER (ORDER BY DATE_C DESC) AS row FROM polkadothack.dbo.co2_bici ) AS alias WHERE row > 0 AND row <= {rows}'
-            DF = pd.read_sql(sql_query, conn)
+            df  = pd.read_sql(sql_query, conn)
 
-            json_out_put = DF.to_json()
+            json_output = df.to_dict()
 
             print('OK')
 
     else:
         print(f'Not valid token {token}')
 
-    return json_out_put
+    json_data = jsonable_encoder(json_output)
+
+    return JSONResponse(content=json_data)
 
 
 if __name__ == '__main__':
