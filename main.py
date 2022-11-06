@@ -103,7 +103,7 @@ async def data_co(co2: int, origin: str, wallet_send: str, token: str):
             tx = sendTk().send(wallet_to_send=wallet_send, amount=amount)
             print(f'🤑 send {amount} to {wallet_send} is: {tx}')
         else:
-            print(f'Invalid token')
+            print(f'👌 data send sensor ok and co2 ok')
 
         # insert data in db
         with pyodbc.connect(
