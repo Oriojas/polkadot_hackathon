@@ -124,7 +124,7 @@ void loop() {
   display.clearDisplay();
   display.drawBitmap(64, 0, logo_polkadot, 60, 64, 1);
 
-  sensorValue = analogRead(sensorPin);
+  sensorValue = analogRead(sensorPin) * 0.7;
   Serial.println(sensorValue);
   
   // Tamaño del texto
