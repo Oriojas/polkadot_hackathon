@@ -1,5 +1,5 @@
 # CO2-Guardian polkadot_hackathon
-En este repositorio está todo el código para la participación en la hackaton Polkadot, la información del hardware que se diseño las tecnologías y el front
+En este repositorio está todo el código para la participación en la hackaton Polkadot, la información del hardware que se diseño las tecnologías y el front el demo los podemos ver en: <http://ec2-54-234-110-184.compute-1.amazonaws.com:8086/>
 
 ![](/home/oscar/GitHub/polkadot_hackathon/img/logo_hack.png)
 
